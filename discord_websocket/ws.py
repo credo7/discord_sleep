@@ -73,8 +73,8 @@ async def run_discord_websocket(bot: Bot, token, shared_dict: dict, my_discord_i
     while True:
         try:
             await connect(uri, token, shared_dict, bot, my_discord_id, my_telegram_chat_id)
-        except Exception as e:
+        except Exception as exc:
             while shared_dict['status'] == 'idle':
                 await asyncio.sleep(5)
-            print(f"Failed to connect: {e}")
+            logger.error(exc, exc_info=True)
             await asyncio.sleep(5)
