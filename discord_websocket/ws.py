@@ -60,7 +60,7 @@ async def connect(uri: str, token: str, shared_dict: dict, bot: Bot, my_discord_
                     else:
                         ping_msg = get_ping_msg(shared_dict['status'],)
                     await ws.send_json(ping_msg)
-                    await asyncio.sleep(15)
+                    await asyncio.sleep(5)
 
             await asyncio.gather(
                 read_messages(),

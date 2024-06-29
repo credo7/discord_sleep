@@ -1,0 +1,11 @@
+version: '3'
+services:
+  discord_app:
+    build: ./
+    restart: always
+    container_name: discord_app
+    env_file:
+      - .env
+    command: bash -c "python3 main.py"
+    volumes:
+      - ./logs:/app/logs
