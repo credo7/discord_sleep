@@ -9,6 +9,17 @@ from dotenv import load_dotenv
 from discord_websocket.ws import run_discord_websocket
 from telegram_bot.dispatcher import run_telegram_consumer
 
+import logging
+
+logging.basicConfig(
+    filename='logs.txt',
+    level=logging.ERROR,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
+logger = logging.getLogger()
+
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -33,13 +44,17 @@ if MY_TELEGRAM_CHAT_ID is None:
 
 
 async def main():
-    shared_dict = {"status": "online", "lock": asyncio.Lock()}
-    bot = Bot(token=TELEGRAM_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    try:
+        shared_dict = {"status": "online", "lock": asyncio.Lock()}
+        bot = Bot(token=TELEGRAM_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
-    await asyncio.gather(
-        run_telegram_consumer(bot, shared_dict),
-        run_discord_websocket(bot, DISCORD_TOKEN, shared_dict, MY_DISCORD_ID, MY_TELEGRAM_CHAT_ID)
-    )
+        await asyncio.gather(
+            run_telegram_consumer(bot, shared_dict),
+            run_discord_websocket(bot, DISCORD_TOKEN, shared_dict, MY_DISCORD_ID, MY_TELEGRAM_CHAT_ID)
+        )
+    except Exception as exc:
+        logger.error(exc, exc_info=True)
 
 if __name__ == "__main__":
+    logger.info("Starting app...")
     asyncio.run(main())
